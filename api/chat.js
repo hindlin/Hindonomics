@@ -1,4 +1,3 @@
-
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -7,23 +6,25 @@ module.exports = async function handler(req, res) {
   if (req.method !== 'POST') { res.status(405).json({ error: 'Method not allowed' }); return; }
   try {
     const { messages, system } = req.body;
-    const lastMsg = messages[messages.length - 1].content;
-    const prompt = system ? system + '\n\nStudent says: ' + lastMsg : lastMsg;
-    const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + process.env.GEMINI_API_KEY;
-    const geminiRes = await fetch(url, {
+    const groqMessages = [];
+    if (system) groqMessages.push({ role: 'system', content: system });
+    messages.forEach(m => groqMessages.push({ role: m.role === 'assistant' ? 'assistant' : 'user', content: m.content }));
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + process.env.GROQ_API_KEY
+      },
       body: JSON.stringify({
-        contents: [{ role: 'user', parts: [{ text: prompt }] }],
-        generationConfig: { maxOutputTokens: 1000, temperature: 0.7 }
+        model: 'llama-3.3-70b-versatile',
+        messages: groqMessages,
+        max_tokens: 1000,
+        temperature: 0.7
       })
     });
-    const geminiData = await geminiRes.json();
-    if (!geminiRes.ok) {
-      res.status(500).json({ error: JSON.stringify(geminiData) });
-      return;
-    }
-    const text = geminiData.candidates[0].content.parts[0].text;
+    const data = await response.json();
+    if (!response.ok) { res.status(500).json({ error: JSON.stringify(data) }); return; }
+    const text = data.choices[0].message.content;
     res.status(200).json({ content: [{ type: 'text', text: text }] });
   } catch (e) {
     res.status(500).json({ error: e.message });
