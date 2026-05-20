@@ -7,12 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#f0f4f8;--surface:#ffffff;--surface2:#e8eef5;--border:#d0d9e8;
-  --accent:#2563eb;--text:#1a2035;--muted:#64748b;
-  --success:#16a34a;--danger:#dc2626;
-  --font:'Sora',sans-serif;--mono:'JetBrains Mono',monospace;
-}
+:root{--bg:#f0f4f8;--surface:#ffffff;--surface2:#e8eef5;--border:#d0d9e8;--accent:#2563eb;--text:#1a2035;--muted:#64748b;--success:#16a34a;--danger:#dc2626;--font:'Sora',sans-serif;--mono:'JetBrains Mono',monospace}
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font)}
 body{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:16px}
 #loginScreen{width:100%;max-width:420px;display:flex;flex-direction:column;align-items:center;gap:24px}
@@ -62,8 +57,6 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
 .input-row textarea:focus{border-color:var(--accent)}
 .send-btn{width:38px;height:38px;border-radius:8px;border:none;background:var(--accent);color:#fff;cursor:pointer;font-size:16px;flex-shrink:0}
 .quiz-scroll{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
-.quiz-scroll::-webkit-scrollbar{width:4px}
-.quiz-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
 .qtop h3{font-size:13px;font-weight:500;color:var(--text);margin-bottom:8px}
 .quiz-type-tabs{display:flex;gap:6px;margin-bottom:8px}
 .qtype-tab{font-size:11px;padding:4px 12px;border-radius:20px;border:0.5px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;font-family:var(--font)}
@@ -120,7 +113,6 @@ tr:last-child td{border-bottom:none}
 </style>
 </head>
 <body>
-
 <div id="loginScreen">
   <div class="logo-mark"><span>Hindo</span>nomics</div>
   <div class="logo-sub">ECO5305 · Advanced Managerial Economics<br>Dr. Hind Lebdaoui</div>
@@ -138,7 +130,6 @@ tr:last-child td{border-bottom:none}
     <div class="switch-link" onclick="showStudent()"><span>← Back to student login</span></div>
   </div>
 </div>
-
 <div id="appScreen">
   <div class="app-header">
     <div>
@@ -193,7 +184,6 @@ tr:last-child td{border-bottom:none}
     </div>
   </div>
 </div>
-
 <div id="dashScreen">
   <div class="dash-header">
     <span style="font-size:18px">📊</span>
@@ -202,12 +192,10 @@ tr:last-child td{border-bottom:none}
   </div>
   <div class="dash-scroll" id="dashContent"><div class="empty">Loading…</div></div>
 </div>
-
 <script>
 const TEACHER_PASS='hind2025';
 const API='/api/chat';
 let student=null,sessionId=null,chatHistory=[],qf='all',qtype='mcq',revealed={},answered={},scoreCorrect=0,scoreWrong=0;
-
 const MCQ=[
   {ch:'1',tag:'Ch.1 · Managerial Economics',q:'Which best defines managerial economics?',opts:['Study of macroeconomic trends','Directing scarce resources to efficiently achieve a managerial goal','Applying accounting principles to business','Analyzing government policies on firms'],ans:1},
   {ch:'1',tag:'Ch.1 · Opportunity Cost',q:'Revenue=$400k, explicit costs=$250k, owner could earn $60k elsewhere. Economic profit?',opts:['$400,000','$150,000','$90,000','$210,000'],ans:2},
@@ -215,95 +203,92 @@ const MCQ=[
   {ch:'1',tag:'Ch.1 · Marginal Analysis',q:'Net benefits are maximized when:',opts:['Total benefit equals total cost','MB exceeds MC by the most','Marginal benefit equals marginal cost','Total benefit is maximum'],ans:2},
   {ch:'1',tag:'Ch.1 · Present Value',q:'PV of $10,000 in 2 years at 5%?',opts:['$10,000','$9,524','$9,070','$11,025'],ans:2},
   {ch:'1',tag:'Ch.1 · TVM Perpetuity',q:'Business earns $50,000/year forever. Interest rate = 10%. Present value?',opts:['$50,000','$500,000','$5,000','$550,000'],ans:1},
-  {ch:'1',tag:'Ch.1 · Normative vs Positive',q:'Which is a POSITIVE statement?',opts:['Minimum wage should be raised','Higher taxes reduce inequality','A 10% price increase → 5% fall in Qd','Firms should prioritize employees over profits'],ans:2},
-  {ch:'1',tag:'Ch.1 · Five Forces',q:"Porter's Five Forces is used to:",opts:['Maximize worker productivity','Analyze sustainability of profits in an industry','Calculate present value','Measure consumer surplus'],ans:1},
+  {ch:'1',tag:'Ch.1 · Normative vs Positive',q:'Which is a POSITIVE statement?',opts:['Minimum wage should be raised','Higher taxes reduce inequality','A 10% price increase leads to a 5% fall in Qd','Firms should prioritize employees over profits'],ans:2},
+  {ch:'1',tag:"Ch.1 · Five Forces",q:"Porter's Five Forces is used to:",opts:['Maximize worker productivity','Analyze sustainability of profits in an industry','Calculate present value','Measure consumer surplus'],ans:1},
   {ch:'1',tag:'Ch.1 · Six Principles',q:'Which is NOT one of the six principles of effective management?',opts:['Understand incentives','Recognize time value of money','Maximize employee headcount','Use marginal analysis'],ans:2},
-  {ch:'1',tag:'Ch.1 · Marginal Analysis Calculation',q:'TB = 200Q − 3Q², TC = 20Q. Profit-maximizing Q?',opts:['Q=20','Q=30','Q=40','Q=50'],ans:1},
+  {ch:'1',tag:'Ch.1 · Marginal Analysis Calculation',q:'TB = 200Q minus 3Q squared, TC = 20Q. Profit-maximizing Q?',opts:['Q=20','Q=30','Q=40','Q=50'],ans:1},
   {ch:'1',tag:'Ch.1 · Implicit Cost',q:'Which is an example of an implicit cost?',opts:['Rent paid for office space','Salaries paid to employees','Salary the owner foregoes by running the business','Raw materials purchased'],ans:2},
   {ch:'1',tag:'Ch.1 · Profit Role',q:'Why do profits play an important role in a market economy?',opts:['They reduce competition','They signal where resources are most valued and guide allocation','They eliminate market failures','They always increase consumer surplus'],ans:1},
-  {ch:'2',tag:'Ch.2 · Law of Demand',q:'Which best reflects the law of demand?',opts:['Price↑ → Qd↑','Income↑ → Qd↓','Price↑ → Qd↓ (ceteris paribus)','Price↓ → Supply↑'],ans:2},
-  {ch:'2',tag:'Ch.2 · Demand Shifters',q:'Which shifts demand for a normal good to the RIGHT?',opts:["Increase in the good's own price",'Decrease in consumer income','Increase in consumer income','Decrease in price of a complement'],ans:2},
+  {ch:'2',tag:'Ch.2 · Law of Demand',q:'Which best reflects the law of demand?',opts:['Price up means Qd up','Income up means Qd down','Price up means Qd down ceteris paribus','Price down means Supply up'],ans:2},
+  {ch:'2',tag:'Ch.2 · Demand Shifters',q:'Which shifts demand for a normal good to the RIGHT?',opts:['Increase in its own price','Decrease in consumer income','Increase in consumer income','Decrease in price of a complement'],ans:2},
   {ch:'2',tag:'Ch.2 · Substitutes',q:'Price of tea rises and demand for coffee increases. Tea and coffee are:',opts:['Complements','Inferior goods','Substitutes','Normal goods'],ans:2},
   {ch:'2',tag:'Ch.2 · Consumer Surplus',q:'Consumer surplus is:',opts:['Profit earned by firms','Extra value consumers receive beyond what they pay','Area above supply curve below price','Total amount consumers spend'],ans:1},
   {ch:'2',tag:'Ch.2 · Producer Surplus',q:'Producer surplus equals:',opts:['Total revenue minus explicit costs','Area below supply curve above price','Area above supply curve below price','Total profit after taxes'],ans:2},
-  {ch:'2',tag:'Ch.2 · Equilibrium',q:'At equilibrium in a competitive market:',opts:['Qd exceeds Qs','Price is set by government','Qd = Qs','Firms earn zero profit'],ans:2},
+  {ch:'2',tag:'Ch.2 · Equilibrium',q:'At equilibrium in a competitive market:',opts:['Qd exceeds Qs','Price is set by government','Qd equals Qs','Firms earn zero profit'],ans:2},
   {ch:'2',tag:'Ch.2 · Price Ceiling',q:'A price ceiling set BELOW equilibrium causes:',opts:['A surplus','A shortage','Supply to increase','Demand to decrease'],ans:1},
   {ch:'2',tag:'Ch.2 · Price Floor',q:'A price floor set ABOVE equilibrium causes:',opts:['A shortage','A surplus','Demand to increase','Supply to decrease'],ans:1},
-  {ch:'2',tag:'Ch.2 · Excise Tax',q:'An excise tax on producers shifts supply:',opts:['Downward (rightward)','Upward (leftward) by the tax amount','Around the equilibrium point','Not at all'],ans:1},
+  {ch:'2',tag:'Ch.2 · Excise Tax',q:'An excise tax on producers shifts supply:',opts:['Downward rightward','Upward leftward by the tax amount','Around the equilibrium point','Not at all'],ans:1},
   {ch:'2',tag:'Ch.2 · Comparative Statics',q:'Demand increases AND supply decreases. What happens to P*?',opts:['Definitely falls','Definitely rises','Ambiguous','Stays the same'],ans:1},
   {ch:'2',tag:'Ch.2 · Supply Shifters',q:'Which shifts supply to the RIGHT?',opts:['Higher input prices','New technology reducing production costs','A per-unit tax on producers','Fewer firms in the market'],ans:1},
   {ch:'2',tag:'Ch.2 · Inferior Goods',q:'For an inferior good, when income rises:',opts:['Demand increases','Demand is unchanged','Demand decreases','Supply increases'],ans:2},
-  {ch:'3',tag:'Ch.3 · Own-Price Elasticity',q:'Own-price elasticity = −0.4. Demand is:',opts:['Elastic','Unitary elastic','Inelastic','Perfectly elastic'],ans:2},
-  {ch:'3',tag:'Ch.3 · TR Test — Price Cut',q:'Firm lowers price and TR increases. This means demand is:',opts:['Inelastic','Unitary elastic','Elastic','Perfectly inelastic'],ans:2},
-  {ch:'3',tag:'Ch.3 · TR Test — Price Rise',q:'For inelastic demand, raising price will:',opts:['Decrease TR','Increase TR','Keep TR constant','Decrease Qd more than proportionately'],ans:1},
-  {ch:'3',tag:'Ch.3 · MR Formula',q:'MR = P(1+1/E). When P=$100 and E=−1, MR=?',opts:['$100','$50','$0','$200'],ans:2},
+  {ch:'3',tag:'Ch.3 · Own-Price Elasticity',q:'Own-price elasticity = -0.4. Demand is:',opts:['Elastic','Unitary elastic','Inelastic','Perfectly elastic'],ans:2},
+  {ch:'3',tag:'Ch.3 · TR Test Price Cut',q:'Firm lowers price and TR increases. Demand is:',opts:['Inelastic','Unitary elastic','Elastic','Perfectly inelastic'],ans:2},
+  {ch:'3',tag:'Ch.3 · TR Test Price Rise',q:'For inelastic demand, raising price will:',opts:['Decrease TR','Increase TR','Keep TR constant','Decrease Qd more than proportionately'],ans:1},
+  {ch:'3',tag:'Ch.3 · MR Formula',q:'MR = P times (1 plus 1/E). When P=$100 and E=-1, MR=?',opts:['$100','$50','$0','$200'],ans:2},
   {ch:'3',tag:'Ch.3 · Cross-Price Elasticity',q:'Cross-price elasticity of +2.5 between X and Y means:',opts:['X and Y are complements','X and Y are inferior goods','X and Y are substitutes','X is a normal good'],ans:2},
-  {ch:'3',tag:'Ch.3 · Income Elasticity',q:'Income elasticity = −0.8. The good is:',opts:['A luxury good','A normal necessity','An inferior good','A Giffen good'],ans:2},
-  {ch:'3',tag:'Ch.3 · Linear Demand Elasticity',q:'Qd = 500 − 4P. At P=$50, Q=300. Own-price elasticity?',opts:['−0.67','−4','−2','−0.5'],ans:0},
-  {ch:'3',tag:'Ch.3 · Log-Linear Demand',q:'ln(Qd) = 3 − 1.5ln(P) + 0.8ln(M). Income elasticity?',opts:['-1.5','3','0.8','1.5'],ans:2},
-  {ch:'3',tag:'Ch.3 · Regression',q:'A low p-value (<0.05) for a coefficient in regression means:',opts:['Poor overall model fit','Variable is statistically significant','R-squared is high','Coefficient equals zero'],ans:1},
+  {ch:'3',tag:'Ch.3 · Income Elasticity',q:'Income elasticity = -0.8. The good is:',opts:['A luxury good','A normal necessity','An inferior good','A Giffen good'],ans:2},
+  {ch:'3',tag:'Ch.3 · Linear Demand Elasticity',q:'Qd = 500 - 4P. At P=$50, Q=300. Own-price elasticity?',opts:['-0.67','-4','-2','-0.5'],ans:0},
+  {ch:'3',tag:'Ch.3 · Log-Linear Demand',q:'ln(Qd) = 3 - 1.5ln(P) + 0.8ln(M). Income elasticity?',opts:['-1.5','3','0.8','1.5'],ans:2},
+  {ch:'3',tag:'Ch.3 · Regression',q:'A low p-value (less than 0.05) for a coefficient in regression means:',opts:['Poor overall model fit','Variable is statistically significant','R-squared is high','Coefficient equals zero'],ans:1},
   {ch:'3',tag:'Ch.3 · Factors of Elasticity',q:'Which makes demand MORE elastic?',opts:['Small share of budget','Short time horizon','Many available substitutes','Necessity goods'],ans:2},
-  {ch:'3',tag:'Ch.3 · Inelastic Range',q:'A firm should never produce in the inelastic portion of demand because:',opts:['MC is negative there','MR is negative — revenue falls as output rises','Demand is too high','Fixed costs are higher there'],ans:1},
-  {ch:'3',tag:'Ch.3 · Elasticity Interpretation',q:'Own-price elasticity = −3 means:',opts:['1% price rise → 3% fall in Qd','3% price rise → 1% fall in Qd','1% price rise → 3% rise in Qd','Demand is inelastic'],ans:0},
+  {ch:'3',tag:'Ch.3 · Inelastic Range',q:'A firm should never produce in the inelastic portion of demand because:',opts:['MC is negative there','MR is negative so revenue falls as output rises','Demand is too high','Fixed costs are higher there'],ans:1},
+  {ch:'3',tag:'Ch.3 · Elasticity Interpretation',q:'Own-price elasticity = -3 means:',opts:['1% price rise leads to 3% fall in Qd','3% price rise leads to 1% fall in Qd','1% price rise leads to 3% rise in Qd','Demand is inelastic'],ans:0},
   {ch:'4',tag:'Ch.4 · Budget Constraint Slope',q:'M=$800, Px=$20, Py=$40. Slope of budget line?',opts:['-0.25','-0.5','-2','-40'],ans:1},
   {ch:'4',tag:'Ch.4 · Income Change',q:'Income increases, prices unchanged. Budget line:',opts:['Rotates around Y-intercept','Shifts inward parallel','Shifts outward parallel','Becomes steeper'],ans:2},
-  {ch:'4',tag:'Ch.4 · Consumer Equilibrium Condition',q:'At consumer equilibrium:',opts:['MRS > Px/Py','MRS < Px/Py','MRS = Px/Py','MRS = 0'],ans:2},
+  {ch:'4',tag:'Ch.4 · Consumer Equilibrium Condition',q:'At consumer equilibrium:',opts:['MRS greater than Px/Py','MRS less than Px/Py','MRS equals Px/Py','MRS equals 0'],ans:2},
   {ch:'4',tag:'Ch.4 · MRS Disequilibrium',q:'MRS=4, Px/Py=2. Consumer should:',opts:['Buy less X more Y','Buy more X less Y','Stay at same bundle','Buy less of both'],ans:1},
-  {ch:'4',tag:'Ch.4 · IC Convexity',q:'Indifference curves are convex to the origin because of:',opts:['Increasing marginal utility','Diminishing MRS (the consumer values variety)','Constant returns to consumption','The law of supply'],ans:1},
+  {ch:'4',tag:'Ch.4 · IC Convexity',q:'Indifference curves are convex to the origin because of:',opts:['Increasing marginal utility','Diminishing MRS','Constant returns to consumption','The law of supply'],ans:1},
   {ch:'4',tag:'Ch.4 · Substitution Effect',q:'Which effect keeps utility constant when price changes?',opts:['Income effect','Substitution effect','Wealth effect','Price effect'],ans:1},
   {ch:'4',tag:'Ch.4 · Income Effect Normal Good',q:'For a normal good, income effect of a price decrease:',opts:['Reduces consumption','Has no effect','Increases consumption','Reverses substitution effect'],ans:2},
-  {ch:'4',tag:'Ch.4 · Perfect Complements',q:'Perfect complements have indifference curves shaped like:',opts:['Straight downward lines','Right angles (L-shaped)','Upward-sloping curves','Horizontal lines'],ans:1},
+  {ch:'4',tag:'Ch.4 · Perfect Complements',q:'Perfect complements have indifference curves shaped like:',opts:['Straight downward lines','Right angles L-shaped','Upward-sloping curves','Horizontal lines'],ans:1},
   {ch:'4',tag:'Ch.4 · Cash vs Gift Certificate',q:'A $200 cash gift is generally preferred to a $200 gift certificate because:',opts:['Cash has higher monetary value','Gift certificate inflates prices','Cash gives full flexibility to spend on any goods','Gift certificates always expire'],ans:2},
   {ch:'4',tag:'Ch.4 · Market Demand Derivation',q:'The market demand curve is derived by:',opts:['Vertical summation of individual demands','Taking the average of individual demands','Horizontal summation of individual demands','Multiplying individual demands'],ans:2},
-  {ch:'4',tag:'Ch.4 · More is Better',q:'"More is better" in consumer theory means:',opts:['Consumers prefer cheaper goods','Consumers prefer bundles with more of at least one good, all else equal','Consumers prefer luxury goods','Higher income always yields higher utility'],ans:1},
-  {ch:'4',tag:'Ch.4 · Budget Line Rotation',q:'Price of X falls, income and Py unchanged. Budget line:',opts:['Shifts outward parallel','Rotates outward around Y-intercept (X-intercept moves right)','Rotates inward around X-intercept','Shifts inward parallel'],ans:1},
+  {ch:'4',tag:'Ch.4 · More is Better',q:'More is better in consumer theory means:',opts:['Consumers prefer cheaper goods','Consumers prefer bundles with more of at least one good all else equal','Consumers prefer luxury goods','Higher income always yields higher utility'],ans:1},
+  {ch:'4',tag:'Ch.4 · Budget Line Rotation',q:'Price of X falls, income and Py unchanged. Budget line:',opts:['Shifts outward parallel','Rotates outward around Y-intercept so X-intercept moves right','Rotates inward around X-intercept','Shifts inward parallel'],ans:1},
   {ch:'5',tag:'Ch.5 · Isoquants',q:'An isoquant shows all input combinations that:',opts:['Cost the same total amount','Produce the same output level','Maximize profit','Minimize total cost'],ans:1},
   {ch:'5',tag:'Ch.5 · MRTS Formula',q:'MRTS equals:',opts:['w/r','MPK/MPL','MPL/MPK','MC/MR'],ans:2},
   {ch:'5',tag:'Ch.5 · Diminishing MRTS',q:'Diminishing MRTS explains why isoquants are:',opts:['Upward sloping','Straight lines','Convex to the origin','Concave to the origin'],ans:2},
-  {ch:'5',tag:'Ch.5 · Isocost Slope',q:'Slope of the isocost line is:',opts:['−MPL/MPK','−w/r','−r/w','−MR/MC'],ans:1},
-  {ch:'5',tag:'Ch.5 · Cost Minimization Condition',q:'A firm minimizes cost when:',opts:['MRTS > w/r','MPL/w > MPK/r','MRTS = w/r (isoquant tangent to isocost)','MR = MC'],ans:2},
-  {ch:'5',tag:'Ch.5 · Input Reallocation',q:'If MPL/w > MPK/r, the firm should:',opts:['Use more capital less labor','Use more labor less capital','Keep input mix unchanged','Shut down production'],ans:1},
-  {ch:'5',tag:'Ch.5 · VMPL Rule',q:'Profit is maximized when hiring labor up to where:',opts:['MPL = MPK','VMPL = MPL','VMPL = wage (w)','MR = w'],ans:2},
+  {ch:'5',tag:'Ch.5 · Isocost Slope',q:'Slope of the isocost line is:',opts:['-MPL/MPK','-w/r','-r/w','-MR/MC'],ans:1},
+  {ch:'5',tag:'Ch.5 · Cost Minimization Condition',q:'A firm minimizes cost when:',opts:['MRTS greater than w/r','MPL/w greater than MPK/r','MRTS equals w/r isoquant tangent to isocost','MR equals MC'],ans:2},
+  {ch:'5',tag:'Ch.5 · Input Reallocation',q:'If MPL/w is greater than MPK/r, the firm should:',opts:['Use more capital less labor','Use more labor less capital','Keep input mix unchanged','Shut down production'],ans:1},
+  {ch:'5',tag:'Ch.5 · VMPL Rule',q:'Profit is maximized when hiring labor up to where:',opts:['MPL equals MPK','VMPL equals MPL','VMPL equals wage w','MR equals w'],ans:2},
   {ch:'5',tag:'Ch.5 · VMPL Calculation',q:'P=$5, MPL=20. What is VMPL?',opts:['$4','$25','$100','$15'],ans:2},
-  {ch:'5',tag:'Ch.5 · MR=MC Rule',q:'Profit-maximizing output is where:',opts:['Total revenue is maximized','Marginal cost is minimized','MR = MC','Average cost is minimized'],ans:2},
+  {ch:'5',tag:'Ch.5 · MR=MC Rule',q:'Profit-maximizing output is where:',opts:['Total revenue is maximized','Marginal cost is minimized','MR equals MC','Average cost is minimized'],ans:2},
   {ch:'5',tag:'Ch.5 · Economies of Scale',q:'Economies of scale exist when:',opts:['LRAC increases as output increases','LRAC is constant','LRAC decreases as output increases','Short-run costs fall with output'],ans:2},
   {ch:'5',tag:'Ch.5 · Diseconomies of Scale',q:'Diseconomies of scale occur when doubling inputs leads to:',opts:['Output more than doubling','Output exactly doubling','Output less than doubling','Costs halving'],ans:2},
-  {ch:'5',tag:'Ch.5 · Isocost Wage Increase',q:'Wage (w) rises, r and C unchanged. Isocost line:',opts:['Shifts outward parallel','Pivots inward on labor axis (L-intercept falls)','Pivots outward on labor axis','Shifts inward parallel'],ans:1},
+  {ch:'5',tag:'Ch.5 · Isocost Wage Increase',q:'Wage w rises, r and C unchanged. Isocost line:',opts:['Shifts outward parallel','Pivots inward on labor axis so L-intercept falls','Pivots outward on labor axis','Shifts inward parallel'],ans:1},
 ];
-
 const OPEN=[
-  {ch:'1',tag:'Ch.1 · Time Value of Money',q:'What is the max you would pay for an asset generating $250,000/year for 5 years at 8% opportunity cost?',a:'PV ≈ $998,175 (sum of discounted cash flows for 5 years)'},
-  {ch:'1',tag:'Ch.1 · Marginal Analysis',q:'TB = 100Q − 2Q², TC = 5Q. Profit-maximizing Q?',a:'MB=MC: 100−4Q=5 → Q=23.75'},
+  {ch:'1',tag:'Ch.1 · Time Value of Money',q:'What is the max you would pay for an asset generating $250,000/year for 5 years at 8% opportunity cost?',a:'PV approximately $998,175 (sum of discounted cash flows for 5 years)'},
+  {ch:'1',tag:'Ch.1 · Marginal Analysis',q:'TB = 100Q minus 2Q squared, TC = 5Q. Profit-maximizing Q?',a:'MB=MC: 100 minus 4Q = 5, so Q = 23.75'},
   {ch:'1',tag:'Ch.1 · Profit',q:'Revenue=$500k, explicit costs=$300k, opportunity cost=$80k. Accounting and economic profit?',a:'Accounting profit=$200k. Economic profit=$120k.'},
-  {ch:'1',tag:'Ch.1 · Normative vs Positive',q:'Classify: (a)"VAT↑5%→spending↓" (b)"Gov should cut taxes" (c)"Unemployment=9%"',a:'(a)Positive (b)Normative (c)Positive'},
-  {ch:'2',tag:'Ch.2 · Supply & Demand',q:'Incomes rise 3%, population over 25 hits record high. Effect on rental car market P* and Q*?',a:'Demand shifts right → P*↑ and Q*↑'},
-  {ch:'2',tag:'Ch.2 · Excise Tax',q:'$0.20/unit excise tax on gasoline suppliers. Effect on supply, P*, Q*?',a:'Supply shifts up $0.20. P*↑ (less than $0.20), Q*↓. Burden shared.'},
-  {ch:'2',tag:'Ch.2 · Price Ceiling',q:'Equilibrium rent=$1,200. Ceiling set at $900. Consequences?',a:'Shortage (Qd>Qs), waiting lists, nonpecuniary costs, deadweight loss.'},
-  {ch:'2',tag:'Ch.2 · Consumer Surplus',q:'P=$3, Q=2L, demand hits price axis at $5. Consumer surplus?',a:'CS = ½×2×(5−3) = $2'},
-  {ch:'3',tag:'Ch.3 · Elasticity Calculation',q:'Qd=1,631−2.6P. At P=$3, Q=1,000. Own-price elasticity? Elastic or inelastic?',a:'E=−2.6×(3/1,000)=−0.0078. Inelastic.'},
-  {ch:'3',tag:'Ch.3 · TR Test',q:'Price: $10→$12. TR: $50k→$54k. What does this indicate about elasticity?',a:'P↑ and TR↑ → Inelastic demand.'},
-  {ch:'3',tag:'Ch.3 · Cross-Price',q:'Kiri price↑10%, La Vache Qui Rit demand↑15%. Cross-price elasticity and relationship?',a:'E=+1.5. Substitutes.'},
-  {ch:'3',tag:'Ch.3 · MR',q:'E=−2, P=$50. MR? Should firm raise or lower price to increase revenue?',a:'MR=$25. Elastic → lower price to increase revenue.'},
-  {ch:'4',tag:'Ch.4 · Budget Constraint',q:'M=$600, Px=$10, Py=$40. (a)Budget line (b)Slope (c)Px rises to $20?',a:'(a)600=10X+40Y (b)Slope=−0.25 (c)Rotates inward; slope=−0.5'},
-  {ch:'4',tag:'Ch.4 · Equilibrium',q:'MRS=3, Px=$6, Py=$3. In equilibrium? What to do?',a:'Px/Py=2. MRS>Px/Py → buy more X, less Y until MRS=2.'},
-  {ch:'4',tag:'Ch.4 · Substitution & Income Effects',q:'Price of X falls. Decompose for a normal good.',a:'Substitution effect: move along IC, consume more X. Income effect: real income↑, consume more X (normal). Both reinforce each other.'},
-  {ch:'5',tag:'Ch.5 · MRTS',q:'MPL=12, MPK=4. (a)MRTS? (b)What happens to MRTS as more L substitutes for K?',a:'(a)MRTS=3 (b)Diminishing MRTS — isoquant becomes flatter, convex shape.'},
-  {ch:'5',tag:'Ch.5 · Cost Min',q:'w=$20, r=$40, MPL=80, MPK=100. Minimizing costs? What to do?',a:'MPL/w=4 > MPK/r=2.5 → Use more labor, less capital.'},
-  {ch:'5',tag:'Ch.5 · Profit Max',q:'P=$10, MPL(5th worker)=8, w=$100. VMPL? Hire?',a:'VMPL=$80 < w=$100 → Do NOT hire.'},
-  {ch:'5',tag:'Ch.5 · Isocost',q:'C=$1,200, w=$20, r=$30. (a)Equation (b)Slope (c)w rises to $40?',a:'(a)1,200=20L+30K (b)−2/3 (c)Pivots inward on L-axis; slope=−4/3'},
-  {ch:'5',tag:'Ch.5 · Economies of Scale',q:'Firm doubles inputs, output more than doubles. Returns to scale? LRAC? Why?',a:'Increasing returns to scale. LRAC falls. Reason: specialization, spreading fixed costs.'},
+  {ch:'1',tag:'Ch.1 · Normative vs Positive',q:'Classify: (a) VAT up 5% means spending down (b) Government should cut taxes (c) Unemployment is 9%',a:'(a) Positive (b) Normative (c) Positive'},
+  {ch:'2',tag:'Ch.2 · Supply and Demand',q:'Incomes rise 3%, population over 25 hits record high. Effect on rental car market P* and Q*?',a:'Demand shifts right so P* up and Q* up'},
+  {ch:'2',tag:'Ch.2 · Excise Tax',q:'$0.20 per unit excise tax on gasoline suppliers. Effect on supply, P*, Q*?',a:'Supply shifts up $0.20. P* rises by less than $0.20, Q* falls. Burden shared.'},
+  {ch:'2',tag:'Ch.2 · Price Ceiling',q:'Equilibrium rent=$1,200. Ceiling set at $900. Consequences?',a:'Shortage (Qd greater than Qs), waiting lists, nonpecuniary costs, deadweight loss.'},
+  {ch:'2',tag:'Ch.2 · Consumer Surplus',q:'P=$3, Q=2 liters, demand hits price axis at $5. Consumer surplus?',a:'CS = 0.5 times 2 times (5 minus 3) = $2'},
+  {ch:'3',tag:'Ch.3 · Elasticity Calculation',q:'Qd=1631 minus 2.6P. At P=$3, Q=1000. Own-price elasticity? Elastic or inelastic?',a:'E = minus 2.6 times (3/1000) = minus 0.0078. Inelastic.'},
+  {ch:'3',tag:'Ch.3 · TR Test',q:'Price: $10 to $12. TR: $50k to $54k. What does this indicate about elasticity?',a:'Price up and TR up means Inelastic demand.'},
+  {ch:'3',tag:'Ch.3 · Cross-Price',q:'Kiri price up 10%, La Vache Qui Rit demand up 15%. Cross-price elasticity and relationship?',a:'E = plus 1.5. Substitutes.'},
+  {ch:'3',tag:'Ch.3 · MR',q:'E=-2, P=$50. MR? Should firm raise or lower price to increase revenue?',a:'MR=$25. Demand is elastic so lower price to increase revenue.'},
+  {ch:'4',tag:'Ch.4 · Budget Constraint',q:'M=$600, Px=$10, Py=$40. (a) Budget line (b) Slope (c) Px rises to $20?',a:'(a) 600=10X+40Y (b) Slope=-0.25 (c) Rotates inward; new slope=-0.5'},
+  {ch:'4',tag:'Ch.4 · Equilibrium',q:'MRS=3, Px=$6, Py=$3. In equilibrium? What to do?',a:'Px/Py=2. MRS greater than Px/Py means buy more X, less Y until MRS=2.'},
+  {ch:'4',tag:'Ch.4 · Substitution and Income Effects',q:'Price of X falls. Decompose for a normal good.',a:'Substitution effect: move along IC, consume more X. Income effect: real income up, consume more X. Both reinforce each other.'},
+  {ch:'5',tag:'Ch.5 · MRTS',q:'MPL=12, MPK=4. (a) MRTS? (b) What happens to MRTS as more L substitutes for K?',a:'(a) MRTS=3 (b) Diminishing MRTS so isoquant becomes flatter and convex.'},
+  {ch:'5',tag:'Ch.5 · Cost Minimization',q:'w=$20, r=$40, MPL=80, MPK=100. Minimizing costs? What to do?',a:'MPL/w=4 is greater than MPK/r=2.5 so use more labor, less capital.'},
+  {ch:'5',tag:'Ch.5 · Profit Max',q:'P=$10, MPL of 5th worker=8, w=$100. VMPL? Hire?',a:'VMPL=$80 which is less than w=$100 so do NOT hire.'},
+  {ch:'5',tag:'Ch.5 · Isocost',q:'C=$1200, w=$20, r=$30. (a) Equation (b) Slope (c) w rises to $40?',a:'(a) 1200=20L+30K (b) slope=-2/3 (c) Pivots inward on L-axis; new slope=-4/3'},
+  {ch:'5',tag:'Ch.5 · Economies of Scale',q:'Firm doubles inputs, output more than doubles. Returns to scale? LRAC? Why?',a:'Increasing returns to scale. LRAC falls. Reason: specialization or spreading fixed costs.'},
 ];
-
-const MATERIAL=`ECO5305 — Dr. Hind Lebdaoui
-CH1: Managerial economics=directing scarce resources efficiently. 6 principles: goals&constraints; accounting profit=TR−explicit costs, economic profit=TR−all costs incl. opportunity cost; Porter's Five Forces; incentives; markets; TVM PV=FV/(1+i)^n. Marginal analysis: MB=MC. Normative=value judgement; Positive=testable.
-CH2: Law of demand P↑→Qd↓. Demand shifters: income(normal/inferior), related prices(substitutes/complements), advertising, population, expectations. Consumer surplus=triangle above price below demand. Law of supply P↑→Qs↑. Supply shifters: input prices, technology, firms, taxes. Excise tax shifts supply up. Producer surplus=triangle above supply below price. Equilibrium Qd=Qs. Price ceiling→shortage. Price floor→surplus. D↑→P*↑Q*↑; S↑→P*↓Q*↑.
-CH3: Own-price elasticity=%ΔQ/%ΔP; elastic|E|>1, inelastic|E|<1. TR test: elastic P↑→TR↓; inelastic P↑→TR↑. MR=P(1+1/E). Cross-price: positive=substitutes, negative=complements. Income: positive=normal, negative=inferior. Linear E=b(P/Q). Log-linear: coefficients are elasticities. Regression: R-squared=fit, p-value=significance.
-CH4: Budget M=PxX+PyY, slope=−Px/Py. Equilibrium: MRS=Px/Py. Substitution effect: along same IC. Income effect: shift to new IC. Normal: income↑→Q↑. Inferior: income↑→Q↓. Market demand=horizontal sum.
-CH5 (required only): Isoquants=same output, convex, downward sloping. MRTS=MPL/MPK; diminishing MRTS. Isocost: C=wL+rK, slope=−w/r. Cost min: MRTS=w/r→MPL/w=MPK/r. Profit max: VMPL=w; VMPK=r; MR=MC. Economies of scale: LRAC falls; diseconomies: LRAC rises; constant: LRAC flat.`;
+const MATERIAL=`ECO5305 by Dr. Hind Lebdaoui.
+CH1: Managerial economics means directing scarce resources efficiently. Six principles: goals and constraints; accounting profit equals TR minus explicit costs, economic profit equals TR minus all costs including opportunity cost; Porter Five Forces; incentives; markets; TVM where PV equals FV divided by (1+i) to the power n. Marginal analysis: MB equals MC. Normative is value judgement; Positive is testable.
+CH2: Law of demand: price up means Qd down. Demand shifters: income (normal or inferior goods), related prices (substitutes or complements), advertising, population, expectations. Consumer surplus is triangle above price below demand. Law of supply: price up means Qs up. Supply shifters: input prices, technology, firms, taxes. Excise tax shifts supply up. Producer surplus is triangle above supply below price. Equilibrium: Qd equals Qs. Price ceiling causes shortage. Price floor causes surplus. Demand up means P* up and Q* up. Supply up means P* down and Q* up.
+CH3: Own-price elasticity equals percent change Q divided by percent change P. Elastic means absolute value greater than 1, inelastic means less than 1. TR test: elastic means price up leads to TR down; inelastic means price up leads to TR up. MR equals P times (1 plus 1/E). Cross-price positive means substitutes, negative means complements. Income positive means normal, negative means inferior. Linear elasticity equals b times (P/Q). Log-linear: coefficients are the elasticities directly. Regression: R-squared measures fit, p-value measures significance.
+CH4: Budget constraint is M equals Px times X plus Py times Y, slope equals negative Px/Py. Equilibrium: MRS equals Px/Py. Substitution effect is movement along same IC. Income effect is shift to new IC. Normal good: income up means Q up. Inferior good: income up means Q down. Market demand equals horizontal sum of individual demands.
+CH5 required topics only: Isoquants show same output combinations of L and K, convex and downward sloping. MRTS equals MPL/MPK and diminishes along isoquant. Isocost is C equals wL plus rK, slope equals negative w/r. Cost minimization: MRTS equals w/r which means MPL/w equals MPK/r. Profit maximization: VMPL equals w; VMPK equals r; MR equals MC for output. Economies of scale: LRAC falls as output rises. Diseconomies: LRAC rises. Constant returns: LRAC flat.`;
 
 function showTeacher(){document.getElementById('studentForm').style.display='none';document.getElementById('teacherForm').style.cssText='display:flex;flex-direction:column;gap:14px'}
 function showStudent(){document.getElementById('teacherForm').style.display='none';document.getElementById('studentForm').style.cssText='display:flex;flex-direction:column;gap:14px'}
-
 function startStudent(){
   const n=document.getElementById('sName').value.trim(),i=document.getElementById('sId').value.trim();
   if(!n||!i){document.getElementById('sErr').style.display='block';return}
@@ -313,62 +298,18 @@ function startStudent(){
   document.getElementById('loginScreen').style.display='none';
   document.getElementById('appScreen').classList.add('on');
   renderQuiz();
-  logEvent('session_start',{student_name:n,student_id:i,session_id:sessionId});
 }
 function checkTeacher(){
   if(document.getElementById('tPass').value!==TEACHER_PASS){document.getElementById('tErr').style.display='block';return}
   document.getElementById('tErr').style.display='none';
   document.getElementById('loginScreen').style.display='none';
   document.getElementById('dashScreen').classList.add('on');
-  loadDash();
 }
 function logout(){
   document.getElementById('dashScreen').classList.remove('on');
   document.getElementById('loginScreen').style.cssText='display:flex;flex-direction:column;align-items:center;gap:24px';
   document.getElementById('tPass').value='';showStudent();
 }
-
-async function callAPI(body){
-  const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-  return r.json();
-}
-async function logEvent(type,data){
-  try{await callAPI({messages:[{role:'user',content:`Log to hindonomics_logs in Supabase: ${JSON.stringify({event_type:type,...data,created_at:new Date().toISOString()})}. Reply ok.`}]});}catch(e){}
-}
-async function fetchLogs(){
-  try{const d=await callAPI({messages:[{role:'user',content:'Return ALL rows from hindonomics_logs as JSON array. If empty return []. Reply with ONLY the JSON array.'}]});
-  const t=d.content?.find(b=>b.type==='text')?.text||'[]';
-  return JSON.parse(t.replace(/```json|```/g,'').trim());}catch(e){return[]}
-}
-async function loadDash(){
-  document.getElementById('dashContent').innerHTML='<div class="empty">Fetching data…</div>';
-  const logs=await fetchLogs();renderDash(logs);
-}
-function renderDash(logs){
-  const el=document.getElementById('dashContent');
-  if(!logs.length){el.innerHTML='<div class="empty">No student activity yet. Share the link to begin.</div>';return}
-  const sessions=logs.filter(l=>l.event_type==='session_start');
-  const questions=logs.filter(l=>l.event_type==='question_asked');
-  const unique=[...new Set(sessions.map(s=>s.student_id))];
-  const cc={1:0,2:0,3:0,4:0,5:0};
-  questions.forEach(q=>{if(q.chapter&&cc[q.chapter]!==undefined)cc[q.chapter]++});
-  const mx=Math.max(...Object.values(cc),1);
-  el.innerHTML=`<div class="row-between"><span class="sec-title">Overview</span><button class="refresh-btn" onclick="loadDash()">↻ Refresh</button></div>
-  <div class="stat-grid">
-    <div class="stat-card"><div class="slabel">Sessions</div><div class="sval">${sessions.length}</div><div class="ssub">all time</div></div>
-    <div class="stat-card"><div class="slabel">Students</div><div class="sval">${unique.length}</div><div class="ssub">unique IDs</div></div>
-    <div class="stat-card"><div class="slabel">Questions</div><div class="sval">${questions.length}</div><div class="ssub">total asked</div></div>
-    <div class="stat-card"><div class="slabel">Avg/student</div><div class="sval">${unique.length?Math.round(questions.length/unique.length):0}</div><div class="ssub">questions</div></div>
-  </div>
-  <span class="sec-title">Activity by chapter</span>
-  <div class="bar-wrap">${[1,2,3,4,5].map(c=>`<div class="bar-row"><div class="bar-label">Chapter ${c}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(cc[c]/mx*100)}%"></div></div><div class="bar-count">${cc[c]}</div></div>`).join('')}</div>
-  <span class="sec-title">Recent sessions</span>
-  <div class="table-wrap"><table><thead><tr><th>Student</th><th>ID</th><th>Time</th></tr></thead>
-  <tbody>${sessions.slice(0,10).map(s=>`<tr><td>${s.student_name||'—'}</td><td>${s.student_id||'—'}</td><td style="color:var(--muted)">${s.created_at?new Date(s.created_at).toLocaleString():'—'}</td></tr>`).join('')||'<tr><td colspan="3" style="text-align:center;color:var(--muted)">None yet</td></tr>'}</tbody></table></div>
-  ${questions.length?`<span class="sec-title">Recent questions</span><div class="table-wrap"><table><thead><tr><th>Student</th><th>Ch.</th><th>Question</th></tr></thead>
-  <tbody>${questions.slice(0,8).map(q=>`<tr><td>${q.student_name||'—'}</td><td><span class="ch-badge">Ch.${q.chapter||'?'}</span></td><td style="color:var(--muted);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${q.question_text||'—'}</td></tr>`).join('')}</tbody></table></div>`:''}`;
-}
-
 function resetScore(){scoreCorrect=0;scoreWrong=0;answered={};updateScore();renderQuiz()}
 function updateScore(){
   const t=scoreCorrect+scoreWrong;
@@ -379,25 +320,24 @@ function updateScore(){
 }
 function setQType(t,el){qtype=t;document.querySelectorAll('.qtype-tab').forEach(b=>b.classList.remove('on'));el.classList.add('on');revealed={};answered={};scoreCorrect=0;scoreWrong=0;updateScore();renderQuiz()}
 function fq(c,el){qf=c;document.querySelectorAll('.cpill').forEach(p=>p.classList.remove('on'));el.classList.add('on');revealed={};answered={};scoreCorrect=0;scoreWrong=0;updateScore();renderQuiz()}
-
 function renderQuiz(){
   const l=document.getElementById('qlist');if(!l)return;
   if(qtype==='mcq'){
     const qs=qf==='all'?MCQ:MCQ.filter(q=>q.ch===qf);
     l.innerHTML=qs.map((q,i)=>{
-      const id=`m_${qf}_${i}`;const done=answered[id];
+      const id='m_'+qf+'_'+i;const done=answered[id];
       const opts=q.opts.map((o,oi)=>{
         let cls='mcq-opt';
         if(done!==undefined){if(oi===q.ans)cls+=' correct';else if(oi===done&&done!==q.ans)cls+=' wrong';}
-        return`<button class="${cls}" onclick="answerMCQ('${id}',${oi},${q.ans})" ${done!==undefined?'disabled':''}>${String.fromCharCode(65+oi)}. ${o}</button>`;
+        return'<button class="'+cls+'" onclick="answerMCQ(\''+id+'\','+oi+','+q.ans+')" '+(done!==undefined?'disabled':'')+'>'+String.fromCharCode(65+oi)+'. '+o+'</button>';
       }).join('');
-      const fb=done!==undefined?(done===q.ans?`<div class="mcq-feedback ok show">✅ Correct!</div>`:`<div class="mcq-feedback no show">❌ Correct answer: <strong>${String.fromCharCode(65+q.ans)}. ${q.opts[q.ans]}</strong></div>`):'';
-      return`<div class="qcard" id="card_m_${qf}_${i}"><div class="qtag">${q.tag}</div><div class="qtext">${q.q}</div><div class="mcq-opts">${opts}</div>${fb}<div class="qbtns"><button onclick="disc(${JSON.stringify(q.q)})">💬 Discuss with Hindonomics</button></div></div>`;
+      const fb=done!==undefined?(done===q.ans?'<div class="mcq-feedback ok show">Correct!</div>':'<div class="mcq-feedback no show">Correct answer: <strong>'+String.fromCharCode(65+q.ans)+'. '+q.opts[q.ans]+'</strong></div>'):'';
+      return'<div class="qcard"><div class="qtag">'+q.tag+'</div><div class="qtext">'+q.q+'</div><div class="mcq-opts">'+opts+'</div>'+fb+'<div class="qbtns"><button onclick="disc(\''+q.q.replace(/'/g,"\\'")+'\')">\uD83D\uDCAC Discuss with Hindonomics</button></div></div>';
     }).join('');
   } else {
     const qs=qf==='all'?OPEN:OPEN.filter(q=>q.ch===qf);
-    l.innerHTML=qs.map((q,i)=>{const id=`o_${qf}_${i}`;const s=revealed[id];
-      return`<div class="qcard"><div class="qtag">${q.tag}</div><div class="qtext">${q.q.replace(/\n/g,'<br>')}</div><div class="qbtns"><button onclick="disc(${JSON.stringify(q.q)})">💬 Discuss</button><button class="pri" onclick="tog('${id}')">${s?'Hide':'Show answer'}</button></div><div class="ans-box${s?' show':''}" id="ans_${id}">${q.a}</div></div>`;
+    l.innerHTML=qs.map((q,i)=>{const id='o_'+qf+'_'+i;const s=revealed[id];
+      return'<div class="qcard"><div class="qtag">'+q.tag+'</div><div class="qtext">'+q.q+'</div><div class="qbtns"><button onclick="disc(\''+q.q.replace(/'/g,"\\'")+'\')">Discuss</button><button class="pri" onclick="tog(\''+id+'\')">'+(s?'Hide':'Show answer')+'</button></div><div class="ans-box'+(s?' show':'')+'" id="ans_'+id+'">'+q.a+'</div></div>';
     }).join('');
   }
 }
@@ -419,10 +359,15 @@ function switchTab(t){
 function addMsg(role,text){
   const m=document.getElementById('messages');
   const d=document.createElement('div');d.className='msg '+role;
-  d.innerHTML=(role==='bot'?'<div class="ico">🎓</div>':'<div class="ico">👤</div>')+`<div class="bubble">${text.replace(/\n/g,'<br>')}</div>`;
+  d.innerHTML=(role==='bot'?'<div class="ico">\uD83C\uDF93</div>':'<div class="ico">\uD83D\uDC64</div>')+'<div class="bubble">'+text.replace(/\n/g,'<br>')+'</div>';
   m.appendChild(d);m.scrollTop=m.scrollHeight;
 }
-function showTyping(){const m=document.getElementById('messages');const d=document.createElement('div');d.className='msg bot';d.id='typing';d.innerHTML='<div class="ico">🎓</div><div class="bubble"><div class="typing"><span></span><span></span><span></span></div></div>';m.appendChild(d);m.scrollTop=m.scrollHeight}
+function showTyping(){
+  const m=document.getElementById('messages');
+  const d=document.createElement('div');d.className='msg bot';d.id='typing';
+  d.innerHTML='<div class="ico">\uD83C\uDF93</div><div class="bubble"><div class="typing"><span></span><span></span><span></span></div></div>';
+  m.appendChild(d);m.scrollTop=m.scrollHeight;
+}
 function rmTyping(){const t=document.getElementById('typing');if(t)t.remove()}
 function detectCh(t){
   const s=t.toLowerCase();
@@ -434,15 +379,35 @@ function detectCh(t){
   return null;
 }
 async function sendMsg(){
-  const inp=document.getElementById('uInput');const text=inp.value.trim();if(!text)return;
-  inp.value='';addMsg('user',text);chatHistory.push({role:'user',content:text});showTyping();
-  logEvent('question_asked',{student_name:student?.name,student_id:student?.id,session_id:sessionId,question_text:text.substring(0,200),chapter:detectCh(text)});
-  const sys=`You are Hindonomics, ECO5305 tutor by Dr. Hind Lebdaoui. HYBRID method: 1) PROBE one Socratic question (1 sentence). 2) EXPLAIN step by step with numbered steps and examples. 3) CHECK with one comprehension question. Correct→affirm+deepen. Confused→re-explain+check. Ch.5 scope ONLY: isoquants,MRTS,isocosts,cost minimization,profit max(VMPL=w,MR=MC),economies of scale. Redirect other Ch.5 topics politely. Material:\n${MATERIAL}`;
+  const inp=document.getElementById('uInput');
+  const text=inp.value.trim();
+  if(!text)return;
+  inp.value='';
+  addMsg('user',text);
+  chatHistory.push({role:'user',content:text});
+  showTyping();
+  const sys='You are Hindonomics, ECO5305 tutor by Dr. Hind Lebdaoui. HYBRID method: 1) PROBE one Socratic question (1 sentence). 2) EXPLAIN step by step with numbered steps and examples. 3) CHECK with one comprehension question. If correct affirm and deepen. If confused re-explain and check. Ch.5 scope ONLY: isoquants, MRTS, isocosts, cost minimization, profit maximization where VMPL=w and MR=MC, and economies of scale. Redirect other Ch.5 topics politely. Material: '+MATERIAL;
   try{
-    const d=await callAPI({messages:chatHistory,system:sys});
-    const rep=d.content?.find(b=>b.type==='text')?.text||'Something went wrong. Please try again.';
-    rmTyping();addMsg('bot',rep);chatHistory.push({role:'assistant',content:rep});
-  }catch(e){rmTyping();addMsg('bot','Something went wrong. Please try again.')}
+    const response=await fetch(API,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({messages:chatHistory,system:sys})
+    });
+    if(!response.ok){
+      const err=await response.json();
+      rmTyping();
+      addMsg('bot','Error: '+JSON.stringify(err));
+      return;
+    }
+    const data=await response.json();
+    const rep=data.content&&data.content[0]&&data.content[0].text?data.content[0].text:'Something went wrong. Please try again.';
+    rmTyping();
+    addMsg('bot',rep);
+    chatHistory.push({role:'assistant',content:rep});
+  }catch(e){
+    rmTyping();
+    addMsg('bot','Network error: '+e.message);
+  }
 }
 </script>
 </body>
