@@ -333,10 +333,10 @@ async function callAPI(body){
   return r.json();
 }
 async function logEvent(type,data){
-  try{await callAPI({model:'claude-sonnet-4-20250514',max_tokens:50,messages:[{role:'user',content:`Log to hindonomics_logs in Supabase: ${JSON.stringify({event_type:type,...data,created_at:new Date().toISOString()})}. Reply ok.`}]});}catch(e){}
+  try{await callAPI({messages:[{role:'user',content:`Log to hindonomics_logs in Supabase: ${JSON.stringify({event_type:type,...data,created_at:new Date().toISOString()})}. Reply ok.`}]});}catch(e){}
 }
 async function fetchLogs(){
-  try{const d=await callAPI({model:'claude-sonnet-4-20250514',max_tokens:4000,messages:[{role:'user',content:'Return ALL rows from hindonomics_logs as JSON array. If empty return []. Reply with ONLY the JSON array.'}]});
+  try{const d=await callAPI({messages:[{role:'user',content:'Return ALL rows from hindonomics_logs as JSON array. If empty return []. Reply with ONLY the JSON array.'}]});
   const t=d.content?.find(b=>b.type==='text')?.text||'[]';
   return JSON.parse(t.replace(/```json|```/g,'').trim());}catch(e){return[]}
 }
@@ -439,7 +439,7 @@ async function sendMsg(){
   logEvent('question_asked',{student_name:student?.name,student_id:student?.id,session_id:sessionId,question_text:text.substring(0,200),chapter:detectCh(text)});
   const sys=`You are Hindonomics, ECO5305 tutor by Dr. Hind Lebdaoui. HYBRID method: 1) PROBE one Socratic question (1 sentence). 2) EXPLAIN step by step with numbered steps and examples. 3) CHECK with one comprehension question. Correct→affirm+deepen. Confused→re-explain+check. Ch.5 scope ONLY: isoquants,MRTS,isocosts,cost minimization,profit max(VMPL=w,MR=MC),economies of scale. Redirect other Ch.5 topics politely. Material:\n${MATERIAL}`;
   try{
-    const d=await callAPI({model:'claude-sonnet-4-20250514',max_tokens:1000,system:sys,messages:chatHistory});
+    const d=await callAPI({messages:chatHistory,system:sys});
     const rep=d.content?.find(b=>b.type==='text')?.text||'Something went wrong. Please try again.';
     rmTyping();addMsg('bot',rep);chatHistory.push({role:'assistant',content:rep});
   }catch(e){rmTyping();addMsg('bot','Something went wrong. Please try again.')}
