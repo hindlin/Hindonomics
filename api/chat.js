@@ -9,7 +9,7 @@ module.exports = async function handler(req, res) {
     const { messages, system } = req.body;
     const lastMsg = messages[messages.length - 1].content;
     const prompt = system ? system + '\n\nStudent says: ' + lastMsg : lastMsg;
-    const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + process.env.GEMINI_API_KEY;
+    const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + process.env.GEMINI_API_KEY;
     const geminiRes = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
