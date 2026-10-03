@@ -24,7 +24,7 @@ module.exports = async function handler(req, res) {
         'Authorization': 'Bearer ' + key
       },
       body: JSON.stringify({
-        model: 'openai/gpt-oss-120b',
+        model: 'llama-3.1-8b-instant',
         messages: groqMessages,
         max_tokens: 1000,
         temperature: 0.7
