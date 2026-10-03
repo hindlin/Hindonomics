@@ -23,7 +23,6 @@ module.exports = async function handler(req, res) {
       !id.includes('prompt-guard')
     );
 
-    // Try models in order — smaller ones have higher TPM limits
     const preferred = [
       'openai/gpt-oss-20b',
       'qwen/qwen3.8-27b',
@@ -38,53 +37,65 @@ module.exports = async function handler(req, res) {
 
     const { messages, system } = req.body;
     const groqMessages = [];
-    // Trim system prompt to reduce token usage
-    if (system) groqMessages.push({ role: 'system', content: system.substring(0, 1500) });
+
+    // System prompt — keep full but cap at 3000 chars to save tokens
+    if (system) {
+      groqMessages.push({ role: 'system', content: system.substring(0, 3000) });
+    }
+
     // Only send last 6 messages to reduce token count
-    const recentMessages = messages.slice(-6);
+    const recentMessages = (messages || []).slice(-6);
     recentMessages.forEach(m => groqMessages.push({
       role: m.role === 'assistant' ? 'assistant' : 'user',
-      content: m.content.substring(0, 800)
+      content: String(m.content || '').substring(0, 1000)
     }));
 
     let lastError = null;
     for (const model of modelQueue) {
-      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + key
-        },
-        body: JSON.stringify({
-          model: model,
-          messages: groqMessages,
-          max_tokens: 600,
-          temperature: 0.7
-        })
-      });
+      try {
+        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + key
+          },
+          body: JSON.stringify({
+            model: model,
+            messages: groqMessages,
+            max_tokens: 1200,
+            temperature: 0.7
+          })
+        });
 
-      const data = await response.json();
+        const data = await response.json();
 
-      if (response.ok) {
-        const text = data.choices[0].message.content;
-        res.status(200).json({ content: [{ type: 'text', text: text }] });
-        return;
-      }
+        if (response.ok) {
+          const text = data.choices[0].message.content;
+          res.status(200).json({ content: [{ type: 'text', text: text }] });
+          return;
+        }
 
-      // If rate limited, try next model
-      if (data?.error?.code === 'rate_limit_exceeded' || data?.error?.code === 'model_not_found') {
         lastError = data;
+
+        // Only retry on rate limit or model not found
+        const code = data?.error?.code || '';
+        if (code === 'rate_limit_exceeded' || code === 'model_not_found' || code === 'model_terms_required') {
+          continue;
+        }
+
+        // Any other error — return immediately
+        res.status(500).json({ error: JSON.stringify(data) });
+        return;
+
+      } catch (innerErr) {
+        lastError = { message: innerErr.message };
         continue;
       }
-
-      // Other error — return it
-      res.status(500).json({ error: JSON.stringify(data) });
-      return;
     }
 
-    // All models failed
-    res.status(429).json({
-      content: [{ type: 'text', text: '⚠️ The AI is busy right now (rate limit reached). Please wait 10 seconds and try again!' }]
+    // All models failed — return friendly message
+    res.status(200).json({
+      content: [{ type: 'text', text: '⚠️ The AI is busy right now. Please wait 15 seconds and try again!' }]
     });
 
   } catch (e) {
